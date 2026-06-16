@@ -4,7 +4,7 @@ module Api
   module V1
     class CommitmentsController < ApplicationController
       before_action :authenticate_user!
-      before_action :set_commitment, only: %i[ show update ]
+      before_action :set_commitment, only: %i[show update]
 
       def index
         render json: current_user.commitments

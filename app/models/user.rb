@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   has_many :commitments, dependent: :destroy
 
-  validates :email, presence: true, uniqueness: true, null: false
+  validates :email, presence: true, uniqueness: true
 
   validates :monthly_income,
             numericality: { greater_than_or_equal_to: 0 },

@@ -3,17 +3,17 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authenticate_user!, only: %i[ me ]
+      before_action :authenticate_user!, only: %i[me]
 
       def create
         user = User.new(user_params)
 
         if user.save
-          reset_session
-          session[:user_id] = user.id
+          token = JwtService.encode(user_id: user.id)
 
           render json: {
             message: "registered",
+            token: token,
             user: {
               id: user.id,
               email: user.email
@@ -26,10 +26,12 @@ module Api
 
       def me
         render json: {
-          id: current_user.id,
-          email: current_user.email,
-          monthly_income: current_user.monthly_income,
-          savings: current_user.savings
+          user: {
+            id: current_user.id,
+            email: current_user.email,
+            monthly_income: current_user.monthly_income,
+            savings: current_user.savings
+          }
         }
       end
 
