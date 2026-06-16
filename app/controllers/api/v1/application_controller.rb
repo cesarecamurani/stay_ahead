@@ -6,13 +6,11 @@ module Api
       private
 
       def current_user
-        @current_user ||= begin
-          token = request.headers["Authorization"]&.split&.last
+        return @current_user if defined?(@current_user)
 
-          payload = JwtService.decode(token)
-
-          User.find_by(id: payload[:user_id]) if payload
-        end
+        token = request.headers["Authorization"]&.split&.last
+        payload = JwtService.decode(token)
+        @current_user = payload && User.find_by(id: payload[:user_id])
       end
 
       def authenticate_user!
