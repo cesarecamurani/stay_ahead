@@ -3,14 +3,14 @@
 class Commitment < ApplicationRecord
   belongs_to :user
 
-  enum category: {
+  enum :category, {
     obligation: 0,   # rent, mortgage, essential fixed costs
     debt: 1,         # loans, installments, credit repayments
     service: 2,      # subscriptions, insurance (for now)
     investment: 3    # pension, funds, investing flows
   }
 
-  enum status: {
+  enum :status, {
     active: 0,
     inactive: 1
   }
