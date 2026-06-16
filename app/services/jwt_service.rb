@@ -8,7 +8,7 @@ class JwtService
 
   class << self
     def encode(payload, exp = 24.hours.from_now)
-      payload[:exp] = exp.to_i
+      payload = payload.merge(exp: exp.to_i)
 
       JWT.encode(payload, SECRET_KEY, ENCODING_ALGORITHM)
     end
