@@ -2,16 +2,21 @@
 
 module Api
   module V1
-    class SessionsController < ApplicationController
-      def create
+    class AuthController < ApplicationController
+      def login
         user = User.find_by(email: params[:email])
 
-        if user&.authenticate(params[:password])
-          reset_session
-          session[:user_id] = user.id
+        unless user
+          render json: { error: "Invalid email or password" }, status: :unauthorized
+          return
+        end
+
+        if user.authenticate(params[:password])
+          token = JwtService.encode(user_id: user.id)
 
           render json: {
             message: "logged_in",
+            token: token,
             user: {
               id: user.id,
               email: user.email
@@ -22,9 +27,7 @@ module Api
         end
       end
 
-      def destroy
-        reset_session
-
+      def logout
         render json: { message: "logged_out" }, status: :ok
       end
     end
