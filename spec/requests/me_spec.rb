@@ -6,7 +6,7 @@ RSpec.describe "Me", type: :request do
   include_context "authenticated request"
   include_context "shared variables"
 
-  describe "GET /api/v1/users/me" do
+  describe "GET /api/v1/me" do
     let(:user) { create(:user, monthly_income:, savings:) }
 
     before do

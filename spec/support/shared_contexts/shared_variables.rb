@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.shared_context "shared variables" do
   let(:json_response) { JSON.parse(response.body) }
   let(:email) { "user@example.com" }

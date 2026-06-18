@@ -13,6 +13,8 @@ class JwtService
     end
 
     def decode(token)
+      return if token.blank?
+
       decoded = JWT.decode(
         token,
         secret_key,

@@ -23,5 +23,9 @@ RSpec.describe JwtService, type: :service do
     it "returns nil for an invalid token" do
       expect(JwtService.decode("invalid_token")).to be_nil
     end
+
+    it "returns nil for a missing token" do
+      expect(JwtService.decode(nil)).to be_nil
+    end
   end
 end

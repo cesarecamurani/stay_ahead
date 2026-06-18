@@ -2,6 +2,7 @@
 require "spec_helper"
 
 ENV["RAILS_ENV"] ||= "test"
+ENV["JWT_SECRET"] ||= "test_jwt_secret"
 
 require_relative "../config/environment"
 
