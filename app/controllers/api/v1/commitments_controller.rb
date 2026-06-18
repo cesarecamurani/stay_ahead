@@ -47,6 +47,7 @@ module Api
         params.require(:commitment).permit(
           :name,
           :category,
+          :recurrence,
           :status,
           :amount,
           :start_date,

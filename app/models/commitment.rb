@@ -15,8 +15,17 @@ class Commitment < ApplicationRecord
     inactive: 1
   }
 
+  enum :recurrence, {
+    one_time: 0,
+    weekly: 1,
+    monthly: 2,
+    quarterly: 3,
+    yearly: 4
+  }
+
   validates :name, presence: true
   validates :category, presence: true
+  validates :recurrence, presence: true
   validates :status, presence: true
   validates :interest_rate, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :duration_months, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true

@@ -3,27 +3,35 @@
 require "jwt"
 
 class JwtService
-  SECRET_KEY = Rails.application.secret_key_base.to_s
-  ENCODING_ALGORITHM = "HS256"
+  ALGORITHM = "HS256"
+  MISSING_JWT_SECRET_ERROR = "JWT_SECRET environment variable is required"
 
   class << self
     def encode(payload, exp = 24.hours.from_now)
       payload = payload.merge(exp: exp.to_i)
 
-      JWT.encode(payload, SECRET_KEY, ENCODING_ALGORITHM)
+      JWT.encode(payload, secret_key, ALGORITHM)
     end
 
     def decode(token)
+      return if token.blank?
+
       decoded = JWT.decode(
         token,
-        SECRET_KEY,
+        secret_key,
         true,
-        algorithm: ENCODING_ALGORITHM
+        algorithm: ALGORITHM
       )[0]
 
       HashWithIndifferentAccess.new(decoded)
     rescue JWT::DecodeError
       nil
+    end
+
+    private
+
+    def secret_key
+      ENV.fetch("JWT_SECRET") { raise MISSING_JWT_SECRET_ERROR }
     end
   end
 end
