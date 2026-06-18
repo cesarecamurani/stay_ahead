@@ -50,19 +50,19 @@ RSpec.describe "Users", type: :request do
         }
       end
 
-      subject(:do_request) { post "/api/v1/users", params: { user: invalid_attributes } }
+      subject(:send_request) { post "/api/v1/users", params: { user: invalid_attributes } }
 
       it "does not create a user" do
-        expect { do_request }.not_to change(User, :count)
+        expect { send_request }.not_to change(User, :count)
       end
 
       it "returns unprocessable_entity status" do
-        do_request
+        send_request
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "returns error messages" do
-        do_request
+        send_request
         expect(json_response["errors"]).to eq(["Password confirmation doesn't match Password"])
       end
     end

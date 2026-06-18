@@ -101,29 +101,29 @@ RSpec.describe "Commitments", type: :request do
     end
 
     context "when authenticated with valid params" do
-      subject(:do_request) { post "/api/v1/commitments", params: { commitment: valid_params }, headers: }
+      subject(:send_request) { post "/api/v1/commitments", params: { commitment: valid_params }, headers: }
 
       it "creates a commitment" do
-        expect { do_request }.to change(Commitment, :count).by(1)
+        expect { send_request }.to change(Commitment, :count).by(1)
       end
 
       it "returns created status" do
-        do_request
+        send_request
         expect(response).to have_http_status(:created)
       end
 
       it "returns created commitment name" do
-        do_request
+        send_request
         expect(json_response["name"]).to eq("Car Loan")
       end
 
       it "stores commitment for current user" do
-        do_request
+        send_request
         expect(Commitment.order(:created_at).last.user_id).to eq(user.id)
       end
 
       it "forces active status on create" do
-        do_request
+        send_request
         expect(json_response["status"]).to eq("active")
       end
     end
@@ -201,8 +201,8 @@ RSpec.describe "Commitments", type: :request do
 
       before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: invalid_update_params }, headers: }
 
-      it "returns unprocessable_content status" do
-        expect(response).to have_http_status(:unprocessable_content)
+      it "returns unprocessable_entity status" do
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "returns validation errors" do

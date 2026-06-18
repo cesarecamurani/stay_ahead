@@ -4,6 +4,7 @@ require "jwt"
 
 class JwtService
   ALGORITHM = "HS256"
+  MISSING_JWT_SECRET_ERROR = "JWT_SECRET environment variable is required"
 
   class << self
     def encode(payload, exp = 24.hours.from_now)
@@ -30,7 +31,7 @@ class JwtService
     private
 
     def secret_key
-      ENV.fetch("JWT_SECRET")
+      ENV.fetch("JWT_SECRET") { raise MISSING_JWT_SECRET_ERROR }
     end
   end
 end
