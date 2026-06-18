@@ -24,3 +24,7 @@ end
 group :development do
   gem "web-console"
 end
+
+group :test do
+  gem "simplecov", require: false
+end
