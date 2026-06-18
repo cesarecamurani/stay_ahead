@@ -9,11 +9,9 @@ RSpec.describe "Me", type: :request do
   describe "GET /api/v1/me" do
     let(:user) { create(:user, monthly_income:, savings:) }
 
-    before do
-      get "/api/v1/me", headers:
-    end
-
     context "when authenticated" do
+      before { get "/api/v1/me", headers: headers }
+
       it "returns user id" do
         expect(json_response["user"]["id"]).to eq(user.id)
       end
