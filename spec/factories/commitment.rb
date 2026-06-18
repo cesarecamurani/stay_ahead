@@ -5,6 +5,7 @@ FactoryBot.define do
     user
     name { "Netflix Subscription" }
     category { :obligation }
+    recurrence { :monthly }
     status { :active }
     amount { 15.0 }
     start_date { Date.today - 7.days }

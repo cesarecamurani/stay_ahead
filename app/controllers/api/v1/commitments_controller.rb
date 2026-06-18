@@ -23,7 +23,7 @@ module Api
           render json: commitment, status: :created
         else
           render json: { errors: commitment.errors.full_messages },
-                 status: :unprocessable_entity
+                 status: :unprocessable_content
         end
       end
 
@@ -33,7 +33,7 @@ module Api
         if commitment.update(commitment_params)
           render json: commitment, status: :ok
         else
-          render json: { errors: commitment.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: commitment.errors.full_messages }, status: :unprocessable_content
         end
       end
 
@@ -47,6 +47,7 @@ module Api
         params.require(:commitment).permit(
           :name,
           :category,
+          :recurrence,
           :status,
           :amount,
           :start_date,
