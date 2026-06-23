@@ -10,6 +10,7 @@ module Api
 
         token = request.headers["Authorization"]&.split&.last
         payload = JwtService.decode(token)
+
         @current_user = payload && User.find_by(id: payload[:user_id])
       end
 

@@ -3,7 +3,7 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authenticate_user!, only: %i[me]
+      before_action :authenticate_user!, only: %i[me update]
 
       def create
         user = User.new(user_params)
@@ -14,25 +14,25 @@ module Api
           render json: {
             message: "registered",
             token: token,
-            user: {
-              id: user.id,
-              email: user.email
-            }
+            user: user_json(user)
           }, status: :created
         else
-          render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: user.errors.full_messages },
+                 status: :unprocessable_entity
+        end
+      end
+
+      def update
+        if current_user.update(profile_params)
+          render json: { user: user_json(current_user) }, status: :ok
+        else
+          render json: { errors: current_user.errors.full_messages },
+                 status: :unprocessable_entity
         end
       end
 
       def me
-        render json: {
-          user: {
-            id: current_user.id,
-            email: current_user.email,
-            monthly_income: current_user.monthly_income,
-            savings: current_user.savings
-          }
-        }
+        render json: { user: user_json(current_user) }, status: :ok
       end
 
       private
@@ -43,8 +43,27 @@ module Api
           :password,
           :password_confirmation,
           :monthly_income,
-          :savings
+          :savings,
+          :currency
         )
+      end
+
+      def profile_params
+        params.require(:user).permit(
+          :monthly_income,
+          :savings,
+          :currency
+        )
+      end
+
+      def user_json(user)
+        {
+          id: user.id,
+          email: user.email,
+          monthly_income: user.monthly_income,
+          savings: user.savings,
+          currency: user.currency
+        }
       end
     end
   end

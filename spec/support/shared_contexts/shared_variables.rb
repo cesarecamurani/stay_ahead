@@ -7,4 +7,5 @@ RSpec.shared_context "shared variables" do
   let(:password_confirmation) { "password123" }
   let(:monthly_income) { 5000.0 }
   let(:savings) { 10000.0 }
+  let(:currency) { "EUR" }
 end

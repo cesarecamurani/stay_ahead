@@ -14,11 +14,14 @@ RSpec.describe "Users", type: :request do
           password:,
           password_confirmation:,
           monthly_income:,
-          savings:
+          savings:,
+          currency:
         }
       end
 
-      before { post "/api/v1/users", params: { user: valid_attributes }, headers: }
+      before do
+        post "/api/v1/users", params: { user: valid_attributes }, headers: auth_headers
+      end
 
       it "returns created status" do
         expect(response).to have_http_status(:created)
