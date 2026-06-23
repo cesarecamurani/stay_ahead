@@ -43,15 +43,17 @@ RSpec.describe "Authentication", type: :request do
     end
 
     context "with non-existent email" do
-      before do
+      subject(:send_request) do
         post "/api/v1/login", params: { email: "nonexistent@example.com", password: "password123" }
       end
 
       it "returns an unauthorized response" do
+        send_request
         expect(response).to have_http_status(:unauthorized)
       end
 
       it "returns an error message" do
+        send_request
         expect(json_response["error"]).to eq("Invalid email or password")
       end
     end

@@ -6,8 +6,6 @@ module Api
       before_action :authenticate_user!
       before_action :set_commitment, only: %i[show update]
 
-      attr_reader :commitment
-
       def index
         render json: current_user.commitments
       end
@@ -40,8 +38,10 @@ module Api
 
       private
 
+      attr_reader :commitment
+
       def set_commitment
-        @commitment ||= current_user.commitments.find_by(id: params[:id])
+        @commitment = current_user.commitments.find_by(id: params[:id])
 
         render json: { error: "Commitment not found" }, status: :not_found unless @commitment
       end
