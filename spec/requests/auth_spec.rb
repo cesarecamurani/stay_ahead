@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Authentication", type: :request do
   let(:user) { create(:user, password: "password123") }
+  let(:password) { "password123" }
   let(:json_response) { JSON.parse(response.body) }
 
   describe "POST /api/v1/login" do
@@ -12,8 +13,6 @@ RSpec.describe "Authentication", type: :request do
     end
 
     context "with valid credentials" do
-      let(:password) { "password123" }
-
       it "returns a successful response" do
         expect(response).to have_http_status(:ok)
       end
@@ -40,6 +39,22 @@ RSpec.describe "Authentication", type: :request do
 
       it "returns an error message" do
         expect(json_response["error"]).to eq("invalid_credentials")
+      end
+    end
+
+    context "with non-existent email" do
+      subject(:send_request) do
+        post "/api/v1/login", params: { email: "nonexistent@example.com", password: "password123" }
+      end
+
+      it "returns an unauthorized response" do
+        send_request
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it "returns an error message" do
+        send_request
+        expect(json_response["error"]).to eq("Invalid email or password")
       end
     end
   end

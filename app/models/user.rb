@@ -22,6 +22,6 @@ class User < ApplicationRecord
   def valid_currency?
     return if currency.blank? || Money::Currency.find(currency)
 
-    errors.add(:currency, "is not a valid currency")
+    errors.add(:currency, "#{currency} is not a valid currency")
   end
 end

@@ -1,12 +1,13 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :users, only: [:create]
+      resources :users, only: %i[create]
       resources :commitments, only: %i[index create show update]
 
       post   "/login",  to: "auth#login"
       delete "/logout", to: "auth#logout"
       get    "/me",     to: "users#me"
+      patch "/me",      to: "users#update"
     end
   end
 end

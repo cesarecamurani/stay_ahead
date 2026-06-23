@@ -12,7 +12,7 @@ RSpec.describe "Commitments", type: :request do
     let!(:other_user_commitment) { create(:commitment) }
 
     context "when authenticated" do
-      before { get "/api/v1/commitments", headers: }
+      before { get "/api/v1/commitments", headers: auth_headers }
 
       it "returns success status" do
         expect(response).to have_http_status(:success)
@@ -48,7 +48,7 @@ RSpec.describe "Commitments", type: :request do
     let!(:commitment) { create(:commitment, user:, name: "Mortgage") }
 
     context "when authenticated and commitment belongs to current user" do
-      before { get "/api/v1/commitments/#{commitment.id}", headers: }
+      before { get "/api/v1/commitments/#{commitment.id}", headers: auth_headers }
 
       it "returns success status" do
         expect(response).to have_http_status(:success)
@@ -66,7 +66,7 @@ RSpec.describe "Commitments", type: :request do
     context "when authenticated and commitment belongs to another user" do
       let(:other_commitment) { create(:commitment) }
 
-      before { get "/api/v1/commitments/#{other_commitment.id}", headers: }
+      before { get "/api/v1/commitments/#{other_commitment.id}", headers: auth_headers }
 
       it "returns not found status" do
         expect(response).to have_http_status(:not_found)
@@ -82,6 +82,18 @@ RSpec.describe "Commitments", type: :request do
 
       it "returns unauthorized error" do
         expect(json_response["error"]).to eq("unauthorized")
+      end
+    end
+
+    context "when commitment does not exist" do
+      before { get "/api/v1/commitments/0", headers: auth_headers }
+
+      it "returns not found status" do
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns commitment not found error" do
+        expect(json_response["error"]).to eq("Commitment not found")
       end
     end
   end
@@ -101,7 +113,7 @@ RSpec.describe "Commitments", type: :request do
     end
 
     context "when authenticated with valid params" do
-      subject(:send_request) { post "/api/v1/commitments", params: { commitment: valid_params }, headers: }
+      subject(:send_request) { post "/api/v1/commitments", params: { commitment: valid_params }, headers: auth_headers }
 
       it "creates a commitment" do
         expect { send_request }.to change(Commitment, :count).by(1)
@@ -139,7 +151,7 @@ RSpec.describe "Commitments", type: :request do
         }
       end
 
-      before { post "/api/v1/commitments", params: { commitment: invalid_params }, headers: }
+      before { post "/api/v1/commitments", params: { commitment: invalid_params }, headers: auth_headers }
 
       it "does not create a commitment" do
         expect(Commitment.count).to eq(0)
@@ -155,7 +167,7 @@ RSpec.describe "Commitments", type: :request do
     end
 
     context "when authenticated without commitment param" do
-      before { post "/api/v1/commitments", params: {}, headers: }
+      before { post "/api/v1/commitments", params: {}, headers: auth_headers }
 
       it "returns bad request status" do
         expect(response).to have_http_status(:bad_request)
@@ -181,7 +193,7 @@ RSpec.describe "Commitments", type: :request do
     context "when authenticated with valid params" do
       let(:update_params) { { name: "New Name", amount: 450 } }
 
-      before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: update_params }, headers: }
+      before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: update_params }, headers: auth_headers }
 
       it "returns ok status" do
         expect(response).to have_http_status(:ok)
@@ -199,7 +211,7 @@ RSpec.describe "Commitments", type: :request do
     context "when authenticated with invalid params" do
       let(:invalid_update_params) { { amount: -1 } }
 
-      before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: invalid_update_params }, headers: }
+      before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: invalid_update_params }, headers: auth_headers }
 
       it "returns unprocessable_entity status" do
         expect(response).to have_http_status(:unprocessable_entity)
@@ -220,7 +232,7 @@ RSpec.describe "Commitments", type: :request do
       before do
         patch "/api/v1/commitments/#{other_commitment.id}",
               params: { commitment: { name: "Not Allowed" } },
-              headers:
+              headers: auth_headers
       end
 
       it "returns not found status" do

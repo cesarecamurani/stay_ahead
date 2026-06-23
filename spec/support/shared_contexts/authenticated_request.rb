@@ -4,7 +4,7 @@ RSpec.shared_context "authenticated request" do
   let(:user) { create(:user) }
   let(:token) { JwtService.encode(user_id: user.id) }
 
-  let(:headers) do
+  let(:auth_headers) do
     {
       "Authorization" => "Bearer #{token}"
     }

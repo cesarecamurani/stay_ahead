@@ -39,11 +39,12 @@ RSpec.describe User, type: :model do
 
     context "when currency is invalid" do
       let(:currency) { "XXX" }
+      let(:error_message) { "#{currency} is not a valid currency" }
 
       before { user.validate }
 
       it "adds an error" do
-        expect(user.errors[:currency]).to include("is not a valid currency")
+        expect(user.errors[:currency]).to include(error_message)
       end
 
       it "marks the user as invalid" do
