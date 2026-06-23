@@ -14,4 +14,14 @@ class User < ApplicationRecord
   validates :savings,
             numericality: { greater_than_or_equal_to: 0 },
             allow_nil: true
+
+  validate :valid_currency?
+
+  private
+
+  def valid_currency?
+    return if currency.blank? || Money::Currency.find(currency)
+
+    errors.add(:currency, "is not a valid currency")
+  end
 end

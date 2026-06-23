@@ -6,5 +6,6 @@ FactoryBot.define do
     password { "password" }
     monthly_income { 4000.00 }
     savings { 1000.00 }
+    currency { "EUR" }
   end
 end
