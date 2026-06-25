@@ -11,11 +11,13 @@ module Calculator
     }.freeze
 
     def call
+      commitments_amount = monthly_commitments_amount
+
       {
         monthly_income: user.monthly_income,
         savings: user.savings,
-        monthly_commitments_amount:,
-        available_cash_flow:
+        monthly_commitments_amount: commitments_amount,
+        available_cash_flow: available_cash_flow(commitments_amount)
       }
     end
 
@@ -33,7 +35,7 @@ module Calculator
       end
     end
 
-    def available_cash_flow
+    def available_cash_flow(monthly_commitments_amount)
       return if user.monthly_income.nil?
 
       user.monthly_income - monthly_commitments_amount

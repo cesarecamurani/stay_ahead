@@ -5,37 +5,32 @@ require "rails_helper"
 RSpec.describe Calculator::Summary do
   subject(:summary) { described_class.new(user) }
 
-  let(:user) { instance_double("User", monthly_income: 5000, savings: 10000) }
+  let(:user) { instance_double("User", monthly_income: BigDecimal("5000"), savings: BigDecimal("10000")) }
   let(:commitment) do
     instance_double(
       "Commitment",
       recurrence: "monthly",
-      amount: 10,
+      amount: BigDecimal("10"),
       currently_active?: true
     )
   end
 
   describe "#call" do
+    let(:call_result) do
+      {
+        monthly_income: BigDecimal("5000"),
+        savings: BigDecimal("10000"),
+        monthly_commitments_amount: BigDecimal("10"),
+        available_cash_flow: BigDecimal("4990")
+      }
+    end
+
     before do
       allow(user).to receive(:commitments).and_return([commitment])
     end
 
-    let(:result) { summary.call }
-
-    it "returns hash with the user's monthly_income" do
-      expect(result[:monthly_income]).to eq(5000)
-    end
-
-    it "returns hash with the user's savings" do
-      expect(result[:savings]).to eq(10000)
-    end
-
-    it "returns hash with the user's monthly_commitments_amount" do
-      expect(result[:monthly_commitments_amount]).to eq(10)
-    end
-
-    it "returns hash with the user's available_cash_flow" do
-      expect(result[:available_cash_flow]).to eq(4990)
+    it "returns the user's financial summary" do
+      expect(summary.call).to eq(call_result)
     end
   end
 
@@ -54,13 +49,29 @@ RSpec.describe Calculator::Summary do
           instance_double(
             "Commitment",
             recurrence: recurrence.to_s,
-            amount: values[:amount]
+            amount: BigDecimal(values[:amount].to_s)
           )
         end
 
         it "calculates the correct monthly amount" do
           expect(summary.send(:monthly_amount, commitment)).to eq(values[:expected])
         end
+      end
+    end
+
+    context "with an unknown recurrence" do
+      let(:commitment) do
+        instance_double(
+          "Commitment",
+          recurrence: "daily",
+          amount: BigDecimal("5")
+        )
+      end
+
+      it "raises an error" do
+        expect {
+          summary.send(:monthly_amount, commitment)
+        }.to raise_error(KeyError)
       end
     end
   end
@@ -70,7 +81,7 @@ RSpec.describe Calculator::Summary do
       instance_double(
         "Commitment",
         recurrence: "monthly",
-        amount: 500,
+        amount: BigDecimal("500"),
         currently_active?: true
       )
     end
@@ -79,7 +90,7 @@ RSpec.describe Calculator::Summary do
       instance_double(
         "Commitment",
         recurrence: "quarterly",
-        amount: 300,
+        amount: BigDecimal("300"),
         currently_active?: true
       )
     end
@@ -90,7 +101,7 @@ RSpec.describe Calculator::Summary do
 
     context "when there are active commitments" do
       it "sums them all" do
-        expect(summary.send(:monthly_commitments_amount)).to eq(600)
+        expect(summary.send(:monthly_commitments_amount)).to eq(BigDecimal("600"))
       end
     end
 
@@ -100,7 +111,7 @@ RSpec.describe Calculator::Summary do
       end
 
       it "excludes them from the sum" do
-        expect(summary.send(:monthly_commitments_amount)).to eq(500)
+        expect(summary.send(:monthly_commitments_amount)).to eq(BigDecimal("500"))
       end
     end
 
@@ -110,19 +121,17 @@ RSpec.describe Calculator::Summary do
       end
 
       it "returns zero" do
-        expect(summary.send(:monthly_commitments_amount)).to eq(0)
+        expect(summary.send(:monthly_commitments_amount)).to eq(BigDecimal("0"))
       end
     end
   end
 
   describe "#available_cash_flow" do
-    before do
-      allow(user).to receive(:commitments).and_return([commitment])
-    end
+    let(:amount) { BigDecimal("10") }
 
     context "when monthly_income is present" do
       it "calculates available cash flow as income minus commitments" do
-        expect(summary.send(:available_cash_flow)).to eq(4990)
+        expect(summary.send(:available_cash_flow, amount)).to eq(BigDecimal("4990"))
       end
     end
 
@@ -132,15 +141,15 @@ RSpec.describe Calculator::Summary do
       end
 
       it "returns nil" do
-        expect(summary.send(:available_cash_flow)).to be_nil
+        expect(summary.send(:available_cash_flow, amount)).to be_nil
       end
     end
 
     context "when there are no commitments" do
-      before { allow(user).to receive(:commitments).and_return([]) }
+      let(:amount) { BigDecimal("0") }
 
       it "returns full income" do
-        expect(summary.send(:available_cash_flow)).to eq(5000)
+        expect(summary.send(:available_cash_flow, amount)).to eq(BigDecimal("5000"))
       end
     end
   end
