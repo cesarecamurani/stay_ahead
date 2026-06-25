@@ -31,4 +31,13 @@ class Commitment < ApplicationRecord
   validates :duration_months, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :start_date, presence: true
+
+  def currently_active?(date = Date.current)
+    return false unless active?
+    return false if start_date > date
+
+    return true if duration_months.blank?
+
+    start_date.advance(months: duration_months) > date
+  end
 end
