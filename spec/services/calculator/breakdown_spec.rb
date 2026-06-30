@@ -36,9 +36,7 @@ RSpec.describe Calculator::Breakdown do
       end
 
       it "returns all categories" do
-        expect(breakdown.call.keys).to match_array(
-          %w[obligation debt service investment]
-        )
+        expect(breakdown.call.keys).to match_array(Commitment.categories.keys)
       end
 
       it "sums monthly amounts by category" do
@@ -67,15 +65,12 @@ RSpec.describe Calculator::Breakdown do
     end
 
     context "when there are no commitments" do
+      let(:expected) do
+        Commitment.categories.keys.index_with(BigDecimal("0"))
+      end
+
       it "returns all categories with zero amounts" do
-        expect(breakdown.call).to eq(
-          {
-            "obligation" => BigDecimal("0"),
-            "debt" => BigDecimal("0"),
-            "service" => BigDecimal("0"),
-            "investment" => BigDecimal("0")
-          }
-        )
+        expect(breakdown.call).to eq(expected)
       end
     end
   end
