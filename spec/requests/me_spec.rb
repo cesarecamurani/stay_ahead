@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Me", type: :request do
+RSpec.describe "Api::V1::Me", type: :request do
   include_context "authenticated request"
-  include_context "shared variables"
+  include_context "shared config"
 
   describe "GET /api/v1/me" do
     let(:user) { create(:user, monthly_income:, savings:) }
@@ -13,19 +13,19 @@ RSpec.describe "Me", type: :request do
       before { get "/api/v1/me", headers: auth_headers }
 
       it "returns user id" do
-        expect(json_response["user"]["id"]).to eq(user.id)
+        expect(json_response[:user][:id]).to eq(user.id)
       end
 
       it "returns user email" do
-        expect(json_response["user"]["email"]).to eq(user.email)
+        expect(json_response[:user][:email]).to eq(user.email)
       end
 
       it "returns user monthly income" do
-        expect(json_response["user"]["monthly_income"]).to eq("#{monthly_income}")
+        expect(json_response[:user][:monthly_income]).to eq("#{monthly_income}")
       end
 
       it "returns user savings" do
-        expect(json_response["user"]["savings"]).to eq("#{savings}")
+        expect(json_response[:user][:savings]).to eq("#{savings}")
       end
 
       it "returns success status" do
@@ -80,15 +80,15 @@ RSpec.describe "Me", type: :request do
       end
 
       it "returns updated user monthly_income" do
-        expect(json_response["user"]["monthly_income"]).to eq("#{monthly_income}")
+        expect(json_response[:user][:monthly_income]).to eq("#{monthly_income}")
       end
 
       it "returns updated user savings" do
-        expect(json_response["user"]["savings"]).to eq("#{savings}")
+        expect(json_response[:user][:savings]).to eq("#{savings}")
       end
 
       it "returns updated user currency" do
-        expect(json_response["user"]["currency"]).to eq(currency)
+        expect(json_response[:user][:currency]).to eq(currency)
       end
     end
 
@@ -118,7 +118,7 @@ RSpec.describe "Me", type: :request do
 
       it "returns the appropriate error messages" do
         send_request
-        expect(json_response["errors"]).to include(
+        expect(json_response[:errors]).to include(
           "Monthly income must be greater than or equal to 0",
           "Savings must be greater than or equal to 0",
           "Currency XXX is not a valid currency"

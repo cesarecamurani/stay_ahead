@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.shared_context "shared variables" do
-  let(:json_response) { JSON.parse(response.body) }
+RSpec.shared_context "shared config" do
+  let(:json_response) { JSON.parse(response.body, symbolize_names: true) }
   let(:email) { "user@example.com" }
   let(:password) { "password123" }
   let(:password_confirmation) { "password123" }

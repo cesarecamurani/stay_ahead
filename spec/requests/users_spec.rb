@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Users", type: :request do
+RSpec.describe "Api::V1::Users", type: :request do
   include_context "authenticated request"
-  include_context "shared variables"
+  include_context "shared config"
 
   describe "POST /api/v1/users" do
     context "with valid parameters" do
@@ -28,19 +28,19 @@ RSpec.describe "Users", type: :request do
       end
 
       it "returns a token" do
-        expect(json_response["token"]).to be_present
+        expect(json_response[:token]).to be_present
       end
 
       it "returns user email" do
-        expect(json_response["user"]["email"]).to eq(email)
+        expect(json_response[:user][:email]).to eq(email)
       end
 
       it "returns user id" do
-        expect(json_response["user"]["id"]).to be_present
+        expect(json_response[:user][:id]).to be_present
       end
 
       it "returns registered message" do
-        expect(json_response["message"]).to eq("registered")
+        expect(json_response[:message]).to eq("registered")
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe "Users", type: :request do
 
       it "returns error messages" do
         send_request
-        expect(json_response["errors"]).to eq(["Password confirmation doesn't match Password"])
+        expect(json_response[:errors]).to eq(["Password confirmation doesn't match Password"])
       end
     end
   end
