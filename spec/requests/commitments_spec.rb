@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Commitments", type: :request do
+RSpec.describe "Api::V1::Commitments", type: :request do
   include_context "authenticated request"
-  include_context "shared variables"
+  include_context "shared config"
 
   describe "GET /api/v1/commitments" do
     let!(:first_commitment) { create(:commitment, user:, name: "Rent") }
@@ -23,11 +23,11 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "includes first commitment id" do
-        expect(json_response.map { |item| item["id"] }).to include(first_commitment.id)
+        expect(json_response.map { |item| item[:id] }).to include(first_commitment.id)
       end
 
       it "does not include other user commitments" do
-        expect(json_response.map { |item| item["id"] }).not_to include(other_user_commitment.id)
+        expect(json_response.map { |item| item[:id] }).not_to include(other_user_commitment.id)
       end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns unauthorized error" do
-        expect(json_response["error"]).to eq("unauthorized")
+        expect(json_response[:error]).to eq("unauthorized")
       end
     end
   end
@@ -55,11 +55,11 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns commitment id" do
-        expect(json_response["id"]).to eq(commitment.id)
+        expect(json_response[:id]).to eq(commitment.id)
       end
 
       it "returns commitment name" do
-        expect(json_response["name"]).to eq("Mortgage")
+        expect(json_response[:name]).to eq("Mortgage")
       end
     end
 
@@ -81,7 +81,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns unauthorized error" do
-        expect(json_response["error"]).to eq("unauthorized")
+        expect(json_response[:error]).to eq("unauthorized")
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns commitment not found error" do
-        expect(json_response["error"]).to eq("Commitment not found")
+        expect(json_response[:error]).to eq("Commitment not found")
       end
     end
   end
@@ -126,7 +126,7 @@ RSpec.describe "Commitments", type: :request do
 
       it "returns created commitment name" do
         send_request
-        expect(json_response["name"]).to eq("Car Loan")
+        expect(json_response[:name]).to eq("Car Loan")
       end
 
       it "stores commitment for current user" do
@@ -136,7 +136,7 @@ RSpec.describe "Commitments", type: :request do
 
       it "forces active status on create" do
         send_request
-        expect(json_response["status"]).to eq("active")
+        expect(json_response[:status]).to eq("active")
       end
     end
 
@@ -162,7 +162,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns validation errors" do
-        expect(json_response["errors"]).to include("Name can't be blank")
+        expect(json_response[:errors]).to include("Name can't be blank")
       end
     end
 
@@ -182,7 +182,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns unauthorized error" do
-        expect(json_response["error"]).to eq("unauthorized")
+        expect(json_response[:error]).to eq("unauthorized")
       end
     end
   end
@@ -204,7 +204,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns updated commitment name" do
-        expect(json_response["name"]).to eq("New Name")
+        expect(json_response[:name]).to eq("New Name")
       end
     end
 
@@ -218,7 +218,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns validation errors" do
-        expect(json_response["errors"]).to include("Amount must be greater than 0")
+        expect(json_response[:errors]).to include("Amount must be greater than 0")
       end
 
       it "does not update commitment amount" do
@@ -250,7 +250,7 @@ RSpec.describe "Commitments", type: :request do
       end
 
       it "returns unauthorized error" do
-        expect(json_response["error"]).to eq("unauthorized")
+        expect(json_response[:error]).to eq("unauthorized")
       end
     end
   end
