@@ -17,11 +17,11 @@ RSpec.describe "Api::V1::Summary", type: :request do
         recurrence: :monthly
       )
     end
-    let(:monthly_income) { user.monthly_income.to_s("F") }
-    let(:savings) { user.savings.to_s("F") }
-    let(:available_cash_flow) { (user.monthly_income - commitment_amount).to_s("F") }
-    let(:monthly_commitments_amount) { "20.0" }
-    let(:savings_runway_months) { (user.savings / commitment_amount).to_s("F") }
+    let(:monthly_income) { format("%.2f", user.monthly_income) }
+    let(:savings) { format("%.2f", user.savings) }
+    let(:available_cash_flow) { format("%.2f", user.monthly_income - commitment_amount) }
+    let(:monthly_commitments_amount) { format("%.2f", commitment_amount) }
+    let(:savings_runway_months) { (user.savings / commitment_amount) }
 
     let(:summary_data) do
       {

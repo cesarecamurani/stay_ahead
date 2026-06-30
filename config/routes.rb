@@ -6,9 +6,12 @@ Rails.application.routes.draw do
 
       post   "/login",  to: "auth#login"
       delete "/logout", to: "auth#logout"
+
       get    "/me",     to: "users#me"
-      patch "/me",      to: "users#update"
+      patch  "/me",     to: "users#update"
+
       get "/summary",   to: "summary#show"
+      get "/breakdown", to: "breakdown#show"
     end
   end
 end

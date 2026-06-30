@@ -19,6 +19,10 @@ module Api
 
         render json: { error: "unauthorized" }, status: :unauthorized
       end
+
+      def present_json(object, serializer:)
+        render json: serializer.new(object).serialize, status: :ok
+      end
     end
   end
 end
