@@ -41,6 +41,14 @@ RSpec.describe Commitment, type: :model do
       end
     end
 
+    context "when commitment is completed" do
+      let(:status) { :completed }
+
+      it "returns false" do
+        expect(commitment.currently_active?).to be(false)
+      end
+    end
+
     context "when the commitment has not started yet" do
       let(:start_date) { Date.current + 1.month }
 

@@ -12,7 +12,8 @@ class Commitment < ApplicationRecord
 
   enum :status, {
     active: 0,
-    inactive: 1
+    inactive: 1,
+    completed: 2
   }
 
   enum :recurrence, {

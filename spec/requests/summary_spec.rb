@@ -21,6 +21,7 @@ RSpec.describe "Api::V1::Summary", type: :request do
     let(:savings) { user.savings.to_s("F") }
     let(:available_cash_flow) { (user.monthly_income - commitment_amount).to_s("F") }
     let(:monthly_commitments_amount) { "20.0" }
+    let(:savings_runway_months) { (user.savings / commitment_amount).to_s("F") }
 
     let(:summary_data) do
       {
@@ -28,7 +29,8 @@ RSpec.describe "Api::V1::Summary", type: :request do
           monthly_income:,
           savings:,
           available_cash_flow:,
-          monthly_commitments_amount:
+          monthly_commitments_amount:,
+          savings_runway_months:
         }
       }
     end
