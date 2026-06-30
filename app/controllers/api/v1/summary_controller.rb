@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def show
-        render json: { summary: }, status: :ok
+        present_json(summary, serializer: SummarySerializer)
       end
 
       private
