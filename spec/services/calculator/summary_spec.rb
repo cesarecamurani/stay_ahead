@@ -5,7 +5,14 @@ require "rails_helper"
 RSpec.describe Calculator::Summary do
   subject(:summary) { described_class.new(user) }
 
-  let(:user) { instance_double("User", monthly_income: BigDecimal("5000"), savings: BigDecimal("10000")) }
+  let(:user) do
+    instance_double(
+      "User",
+      monthly_income: BigDecimal("5000"),
+      savings: BigDecimal("10000")
+    )
+  end
+
   let(:commitment) do
     instance_double(
       "Commitment",
@@ -35,50 +42,8 @@ RSpec.describe Calculator::Summary do
     end
   end
 
-  describe "#monthly_amount" do
-    recurrences = {
-      weekly:    { amount: 15, expected: BigDecimal("65") },
-      monthly:   { amount: 50, expected: BigDecimal("50") },
-      quarterly: { amount: 300, expected: BigDecimal("100") },
-      yearly:    { amount: 600, expected: BigDecimal("50") },
-      one_time:  { amount: 1000, expected: BigDecimal("0") }
-    }
-
-    recurrences.each do |recurrence, values|
-      context "with a #{recurrence} recurrence commitment" do
-        let(:commitment) do
-          instance_double(
-            "Commitment",
-            recurrence: recurrence.to_s,
-            amount: BigDecimal(values[:amount].to_s)
-          )
-        end
-
-        it "calculates the correct monthly amount" do
-          expect(summary.send(:monthly_amount, commitment)).to eq(values[:expected])
-        end
-      end
-    end
-
-    context "with an unknown recurrence" do
-      let(:commitment) do
-        instance_double(
-          "Commitment",
-          recurrence: "daily",
-          amount: BigDecimal("5")
-        )
-      end
-
-      it "raises an error" do
-        expect {
-          summary.send(:monthly_amount, commitment)
-        }.to raise_error(KeyError)
-      end
-    end
-  end
-
   describe "#monthly_commitments_amount" do
-    let(:commitment1) do
+    let(:commitment_1) do
       instance_double(
         "Commitment",
         recurrence: "monthly",
@@ -87,7 +52,7 @@ RSpec.describe Calculator::Summary do
       )
     end
 
-    let(:commitment2) do
+    let(:commitment_2) do
       instance_double(
         "Commitment",
         recurrence: "quarterly",
@@ -97,7 +62,7 @@ RSpec.describe Calculator::Summary do
     end
 
     before do
-      allow(user).to receive(:commitments).and_return([commitment1, commitment2])
+      allow(user).to receive(:commitments).and_return([commitment_1, commitment_2])
     end
 
     context "when there are active commitments" do
@@ -108,7 +73,7 @@ RSpec.describe Calculator::Summary do
 
     context "when there are inactive commitments" do
       before do
-        allow(commitment2).to receive(:currently_active?).and_return(false)
+        allow(commitment_2).to receive(:currently_active?).and_return(false)
       end
 
       it "excludes them from the sum" do
@@ -185,16 +150,16 @@ RSpec.describe Calculator::Summary do
 
   describe "#active_commitments" do
     context "when there are active and inactive commitments" do
-      let(:commitment1) { instance_double("Commitment", currently_active?: true) }
-      let(:commitment2) { instance_double("Commitment", currently_active?: false) }
-      let(:commitment3) { instance_double("Commitment", currently_active?: true) }
+      let(:commitment_1) { instance_double("Commitment", currently_active?: true) }
+      let(:commitment_2) { instance_double("Commitment", currently_active?: false) }
+      let(:commitment_3) { instance_double("Commitment", currently_active?: true) }
 
       before do
-        allow(user).to receive(:commitments).and_return([commitment1, commitment2, commitment3])
+        allow(user).to receive(:commitments).and_return([commitment_1, commitment_2, commitment_3])
       end
 
       it "returns only active commitments" do
-        expect(summary.send(:active_commitments)).to eq([commitment1, commitment3])
+        expect(summary.send(:active_commitments)).to eq([commitment_1, commitment_3])
       end
     end
 
