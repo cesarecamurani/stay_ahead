@@ -151,7 +151,11 @@ RSpec.describe "Api::V1::Commitments", type: :request do
         }
       end
 
-      before { post "/api/v1/commitments", params: { commitment: invalid_params }, headers: auth_headers }
+      before do
+        post "/api/v1/commitments",
+             params: { commitment: invalid_params },
+             headers: auth_headers
+      end
 
       it "does not create a commitment" do
         expect(Commitment.count).to eq(0)
@@ -191,9 +195,13 @@ RSpec.describe "Api::V1::Commitments", type: :request do
     let!(:commitment) { create(:commitment, user:, name: "Old Name", amount: 500) }
 
     context "when authenticated with valid params" do
-      let(:update_params) { { name: "New Name", amount: 450 } }
+      let(:update_params) { { name: "New Name", amount: 450, status: "inactive" } }
 
-      before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: update_params }, headers: auth_headers }
+      before do
+        patch "/api/v1/commitments/#{commitment.id}",
+              params: { commitment: update_params },
+              headers: auth_headers
+      end
 
       it "returns ok status" do
         expect(response).to have_http_status(:ok)
@@ -201,6 +209,10 @@ RSpec.describe "Api::V1::Commitments", type: :request do
 
       it "updates commitment name" do
         expect(commitment.reload.name).to eq("New Name")
+      end
+
+      it "deactivates the commitment" do
+        expect(commitment.reload).to be_inactive
       end
 
       it "returns updated commitment name" do
@@ -211,7 +223,11 @@ RSpec.describe "Api::V1::Commitments", type: :request do
     context "when authenticated with invalid params" do
       let(:invalid_update_params) { { amount: -1 } }
 
-      before { patch "/api/v1/commitments/#{commitment.id}", params: { commitment: invalid_update_params }, headers: auth_headers }
+      before do
+        patch "/api/v1/commitments/#{commitment.id}",
+              params: { commitment: invalid_update_params },
+              headers: auth_headers
+      end
 
       it "returns unprocessable_entity status" do
         expect(response).to have_http_status(:unprocessable_entity)

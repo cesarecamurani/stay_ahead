@@ -21,7 +21,8 @@ RSpec.describe Calculator::Summary do
         monthly_income: BigDecimal("5000"),
         savings: BigDecimal("10000"),
         monthly_commitments_amount: BigDecimal("10"),
-        available_cash_flow: BigDecimal("4990")
+        available_cash_flow: BigDecimal("4990"),
+        savings_runway_months: BigDecimal("1000")
       }
     end
 
@@ -150,6 +151,34 @@ RSpec.describe Calculator::Summary do
 
       it "returns full income" do
         expect(summary.send(:available_cash_flow, amount)).to eq(BigDecimal("5000"))
+      end
+    end
+  end
+
+  describe "#savings_runway_months" do
+    let(:amount) { BigDecimal("10") }
+
+    context "when savings is present and commitments amount is not zero" do
+      it "calculates savings runway months as savings divided by commitments" do
+        expect(summary.send(:savings_runway_months, amount)).to eq(BigDecimal("1000"))
+      end
+    end
+
+    context "when savings is nil" do
+      before do
+        allow(user).to receive(:savings).and_return(nil)
+      end
+
+      it "returns nil" do
+        expect(summary.send(:savings_runway_months, amount)).to be_nil
+      end
+    end
+
+    context "when commitments amount is zero" do
+      let(:amount) { BigDecimal("0") }
+
+      it "returns nil" do
+        expect(summary.send(:savings_runway_months, amount)).to be_nil
       end
     end
   end
